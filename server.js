@@ -6,6 +6,7 @@ import {
   loginRouter,
   autherRouter,
   categoryRouter,
+  meRouter,
 } from "./router/index.js";
 config();
 
@@ -17,6 +18,7 @@ app.use("/category", categoryRouter);
 app.use("/admin",AdminRouter)
 app.use("/superAdmin", SuperAdminRouter)
 app.use("/login", loginRouter);
+app.use("/me", meRouter);
 
 
 const port = process.env.PORT;
