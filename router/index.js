@@ -1,2 +1,5 @@
 export * from "./auther.routes.js"
 export * from "./category.routes.js"
+export * from "./admin.routes.js"
+export * from "./superAdmin.routes.js"
+export * from "./sign.routes.js"

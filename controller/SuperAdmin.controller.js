@@ -1,33 +1,13 @@
-import { Auther } from "../models/index.js";
-import autherChek from "../schema/auther.schema.js";
+import { Super } from "../models/index.js";
+import  superAdminChek  from "../schema/superAdmin.schema.js";
 
-export const getSearchAutherCon = async (req, res, next) => {
+export const createSuperAdimCon = async (req, res, next) => {
   try {
-    const { q } = req.query;
-    const limit = parseInt(req.query.limit) || 10;
-    const offset = parseInt(req.query.offset) || 0;
-    if (!q) {
-      return res.status(400).send("fiellds must be filled");
-    }
-    const autherCret = await Auther.find({ name: q }).limit(limit).skip(offset);
-
-    res.status(201).send({
-      status: "Creted",
-      user: autherCret,
-    });
-  } catch (err) {
-    next(err);
-  }
-};
-
-
-export const createAutheryCon = async (req, res, next) => {
-  try {
-    const { error, value } = autherChek(req.body);
+    const { error, value } = superAdminChek(req.body);
     if (error) {
       return res.status(400).send("fiellds must be filled");
     }
-    const autherCret = await Auther({
+    const autherCret = await Super({
       ...req.body,
     });
     await autherCret.save();
@@ -41,14 +21,15 @@ export const createAutheryCon = async (req, res, next) => {
   }
 };
 
-export const updateAutherCon = async (req, res, next) => {
+export const updateSuperAdimCon = async (req, res, next) => {
   const { id } = req.params;
   try {
-    const { error, value } = autherChek(req.body);
+    const { error, value } = superAdminChek(req.body);
     if (error || !id) {
       return res.status(400).send("fiellds must be filled");
     }
-    const updatedAuthor = await Auther.findByIdAndUpdate(id, req.body);
+
+    const updatedAuthor = await Super.findByIdAndUpdate(id, req.body);
     res.status(201).send({
       status: "Updated",
     });
@@ -57,7 +38,7 @@ export const updateAutherCon = async (req, res, next) => {
   }
 };
 
-export const getAutherCon = async (req, res, next) => {
+export const getSuperAdimCon = async (req, res, next) => {
   try {
     const autherget = await Auther.find();
     res.status(201).send({
@@ -69,13 +50,13 @@ export const getAutherCon = async (req, res, next) => {
   }
 };
 
-export const getByIdAutherCon = async (req, res, next) => {
+export const getByIdSuperAdimCon = async (req, res, next) => {
   const { id } = req.params;
   try {
     if (!id) {
       return res.status(404).send("fiellds must be filled");
     }
-    const byId = await Auther.find({ _id: id });
+    const byId = await Super.find({ _id: id });
     res.status(201).send({
       status: "get",
       data: byId,
@@ -85,13 +66,13 @@ export const getByIdAutherCon = async (req, res, next) => {
   }
 };
 
-export const deleteAutherCon = async (req, res, next) => {
+export const deleteSuperAdimCon = async (req, res, next) => {
   const { id } = req.params;
   try {
     if (!id) {
       return res.status(404).send("fiellds must be filled");
     }
-    const deleteCategory = await Category.deleteOne({ _id: id });
+    const deleteCategory = await Super.deleteOne({ _id: id });
 
     if (deleteCategory.deletedCount) {
       return res.status(201).send({
