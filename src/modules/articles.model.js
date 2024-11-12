@@ -15,7 +15,7 @@ const artclSchema = new mongoose.Schema(
     },
     category_id: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Categoriy",
+      ref: "categories",
     },
   },
   {

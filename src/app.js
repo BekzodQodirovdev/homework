@@ -7,6 +7,7 @@ import {
   userRouter,
   categoryRouter,
   articlesRouter,
+  coursesRouter,
 } from "./routes/index.js";
 
 dotenv.config();
@@ -20,6 +21,8 @@ app.use(morgan("dev"));
 app.use("/auth", authRouter);
 app.use("/blog", blogRouter);
 app.use("/category", categoryRouter);
+app.use("/courses", coursesRouter);
+app.use("/comments", commentsRouter);
 app.use("/articles", articlesRouter);
 app.use("/api/v1/users", userRouter);
 
