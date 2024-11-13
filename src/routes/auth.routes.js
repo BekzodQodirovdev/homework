@@ -1,5 +1,10 @@
 import { Router } from "express";
-import { loginController, registerController } from "../controllers/index.js";
+import {
+  loginController,
+  registerController,
+  verifyController,
+  forgerPasswordController,
+} from "../controllers/index.js";
 import { authGuard, roleGuard } from "../middleware/index.js";
 
 export const authRouter = new Router();
@@ -14,3 +19,5 @@ authRouter.get(
     res.send("ok");
   }
 );
+authRouter.post("/verify", verifyController);
+authRouter.post("/forgetPass", forgerPasswordController);
