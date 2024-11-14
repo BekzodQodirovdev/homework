@@ -7,7 +7,7 @@ export const addcoursesCon = async (req, res, next) => {
     await newcourses.save();
     return res.status(statusCodes.CREATED).send("created");
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     next(new ApiError(error.statusCode, error.message));
   }
 };

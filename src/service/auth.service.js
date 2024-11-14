@@ -5,3 +5,9 @@ export const createUser = async (data) => {
   await newUser.save();
   return newUser;
 };
+
+export const userfindOne = async (data) => {
+  const userdata = await User.findOne(data);
+
+  return userdata;
+};

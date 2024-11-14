@@ -2,6 +2,16 @@ import app from "./src/app.js";
 import { connectMongodb } from "./src/database/index.js";
 import { logger } from "./src/utils/index.js";
 
+process.on("uncaughtExeption", (err) => {
+  logger.error("Uncaught Exeption: ", err);
+  process.exit(1);
+});
+
+process.on("unhandledRejection", (reason, promise) => {
+  logger.error("Unhandled Rejection at: ", promise, "reason: ", reason);
+  process.exit(1);
+});
+
 const startApp = async () => {
   try {
     await connectMongodb();

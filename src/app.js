@@ -8,6 +8,7 @@ import {
   categoryRouter,
   articlesRouter,
   coursesRouter,
+  commentsRouter,
 } from "./routes/index.js";
 
 dotenv.config();

@@ -1,5 +1,5 @@
 import { Comments } from "../modules/index.js";
-import { statusCodes, errorMessages, ApiError } from "../utils/index.js";
+import { statusCodes, errorMessages, ApiError, logger } from "../utils/index.js";
 
 export const addcommentsCon = async (req, res, next) => {
   try {
@@ -7,7 +7,7 @@ export const addcommentsCon = async (req, res, next) => {
     await newcomments.save();
     return res.status(statusCodes.CREATED).send("created");
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     next(new ApiError(error.statusCode, error.message));
   }
 };

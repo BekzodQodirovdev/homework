@@ -22,9 +22,9 @@ export const sendMail = (to, subject, text) => {
     },
     function (error, info) {
       if (error) {
-        console.log(error);
+        logger.error(error);
       } else {
-        console.log("Email sent: " + info.response);
+        logger.info("Email sent: " + info.response);
       }
     }
   );

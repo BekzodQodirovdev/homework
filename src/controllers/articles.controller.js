@@ -1,20 +1,35 @@
-import { Articles } from "../modules/index.js";
-import { statusCodes, errorMessages, ApiError } from "../utils/index.js";
+// import { Articles } from "../modules/index.js";
+import {
+  createArticles,
+  ArticlesfindOne,
+  Articlesfind,
+  ArticlesfindOneAndUpdate,
+  ArticlesdeleteOne,
+} from "../service/index.js";
+import {
+  statusCodes,
+  errorMessages,
+  ApiError,
+  logger,
+} from "../utils/index.js";
 
 export const addArticlesCon = async (req, res, next) => {
   try {
-    const newArticles = new Articles({ ...req.body, author_id: req.user.id });
+    const newArticles = new createArticles({
+      ...req.body,
+      author_id: req.user.id,
+    });
     await newArticles.save();
     return res.status(statusCodes.CREATED).send("created");
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     next(new ApiError(error.statusCode, error.message));
   }
 };
 
 export const getAllArticlesCon = async (req, res, next) => {
   try {
-    const allArticles = await Articles.find();
+    const allArticles = await Articlesfind();
 
     if (allArticles.length === 0) {
       return res
@@ -30,7 +45,7 @@ export const getAllArticlesCon = async (req, res, next) => {
 
 export const getOneArticlesCon = async (req, res, next) => {
   try {
-    const allArticles = await Articles.find({ _id: req.params.id });
+    const allArticles = await Articlesfind({ _id: req.params.id });
 
     if (allArticles.length === 0) {
       return res
@@ -46,11 +61,11 @@ export const getOneArticlesCon = async (req, res, next) => {
 
 export const updateOneArticlesCon = async (req, res, next) => {
   try {
-    const allArticles = await Articles.find({ _id: req.params.id });
+    const allArticles = await Articlesfind({ _id: req.params.id });
     const user_id = req.user.id;
     const author_id = allArticles[0].author_id;
     if (user_id == author_id) {
-      const updateArticles = await Articles.findByIdAndUpdate(
+      const updateArticles = await ArticlesfindOneAndUpdate(
         { _id: req.params.id },
         req.body
       );
@@ -77,7 +92,7 @@ export const deleteOneArticlesCon = async (req, res, next) => {
     const author_id = allArticles[0].author_id;
 
     if (user_id == author_id) {
-      const allArticles = await Articles.deleteOne({ _id: req.params.id });
+      const allArticles = await ArticlesdeleteOne({ _id: req.params.id });
 
       if (allArticles.deletedCount === 0) {
         return res

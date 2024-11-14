@@ -12,6 +12,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@logtail/node": "^0.5.2",
+    "@logtail/winston": "^0.5.2",
     "bcrypt": "^5.1.1",
     "chalk": "^5.3.0",
     "dotenv": "^16.4.5",
@@ -20,7 +22,9 @@
     "mongoose": "^8.8.0",
     "morgan": "^1.10.0",
     "nodemailer": "^6.9.16",
+    "otp-generator": "^4.0.1",
     "pino-http": "^10.3.0",
-    "uuid": "^11.0.3"
+    "uuid": "^11.0.3",
+    "winston": "^3.17.0"
   }
 }
