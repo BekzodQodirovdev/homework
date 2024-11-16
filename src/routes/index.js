@@ -1,3 +1,5 @@
 export * from "./user.routes.js"
 export * from "./addresses.routes.js"
 export * from "./socialFiles.routes.js"
+export * from "./categories.routes.js"
+export * from "./products.routes.js"
