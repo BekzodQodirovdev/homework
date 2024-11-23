@@ -1,0 +1,5 @@
+export * from "./user.validator.js"
+export * from "./teacher.validator.js"
+export * from "./student.validator.js"
+export * from "./courses.validator.js"
+export * from "./assignment.validator.js"
