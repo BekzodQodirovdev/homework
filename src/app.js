@@ -5,7 +5,8 @@ import {
     userRouter,
     studentRouter,
     coursesRouter,
-    assignmentRouter
+    assignmentRouter,
+    googleRouter
 } from "./router/index.js"
 
 export const app = express()
@@ -14,6 +15,8 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(morgan("dev"))
 
+
+app.use("/api/v1", googleRouter)
 app.use("/api/v1/user", userRouter)
 app.use("/api/v1/teacher", teacherRouter)
 app.use("/api/v1/student", studentRouter)
