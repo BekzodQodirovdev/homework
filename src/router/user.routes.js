@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router } from "express"
 import {
     getAllUser,
     getByIdUser,
@@ -6,11 +6,18 @@ import {
     deleteUser,
     createUser,
 } from "../controller/index.js"
+import { authGuard, isCheked, roleGuard } from "../middleware/index.js"
 
 export const userRouter = new Router()
 
-userRouter.get("/",getAllUser)
+userRouter.get("/", authGuard, roleGuard(["admin"]), getAllUser)
 userRouter.post("/", createUser)
-userRouter.get("/:id",getByIdUser)
-userRouter.put("/:id",updateUser)
-userRouter.delete("/:id",deleteUser)
+userRouter.get(
+    "/:id",
+    authGuard,
+    isCheked,
+    roleGuard(["admin", "user"]),
+    getByIdUser,
+)
+userRouter.put("/:id", authGuard, isCheked, updateUser)
+userRouter.delete("/:id", authGuard, isCheked, deleteUser)

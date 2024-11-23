@@ -1,8 +1,12 @@
 import { Router } from "express";
 import passport from "passport";
+import { loginController } from "../controller/user.controller.js"
 import "../strategies/passport-google.js";
 
-export const googleRouter = Router()
+
+export const googleRouter = new Router()
+
+googleRouter.post("/auth/login", loginController)
 
 googleRouter.get(
     "/profile",
