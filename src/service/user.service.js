@@ -49,3 +49,30 @@ export const deleteUserService = (id) => {
         throw error
     }
 }
+
+export const createOtpServise = (id, otp) => {
+    try {
+        db("otp").insert({
+            user_id: user._id,
+            otp_code: otp,
+        })
+    } catch (error) {
+        throw error
+    }
+}
+
+export const findOtpServise = (id) => {
+    try {
+        return db("otp").where("user_id", "=", id).first()
+    } catch (error) {
+        throw error
+    }
+}
+
+export const deleteOtpServise = (id) => {
+    try {
+        db("otp").where("user_id", "=", id).del()
+    } catch (error) {
+        throw error
+    }
+}

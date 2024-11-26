@@ -5,10 +5,15 @@ import {
     updateUserService,
     deleteUserService,
     getByEmailUserService,
+    createOtpServise,
+    deleteOtpServise,
+    findOtpServise,
 } from "../service/index.js"
 import { userValidate } from "../validators/index.js"
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
+import { sendMail } from "../helpers/mail.js"
+import { otpGenerator } from "../helpers/otp.js"
 
 export const loginController = async (req, res, next) => {
     try {
@@ -74,9 +79,41 @@ export const createUser = async (req, res, next) => {
         }
 
         const data = await createUserService(updateData)
+
+        const otp = otpGenerator()
+        await sendMail(req.body.email, "OTP", `this is your OTP: ${otp}`)
+        await createOtpServise(data.id, otp)
+
         return res.status(201).send({ status: "CREATED", data })
     } catch (err) {
         next(err)
+    }
+}
+
+export const verifyController = async (req, res, next) => {
+    try {
+        const { otp, email } = req.body
+
+        const currentUser = await getByEmailUserService(email)
+        const currentOtp = await findOtpServise(currentUser.id)
+
+        const isEqual = currentOtp.otp_code == otp
+
+        if (!isEqual) {
+            return res.send("OTP is not valid")
+        }
+
+        await deleteOtpServise(currentUser.id)
+        await updateUserService(
+            currentUser.id,
+            {
+                is_active: true,
+            },
+        )
+
+        res.send("user is actived")
+    } catch (error) {
+        next(new ApiError(error.statusCode, error.message))
     }
 }
 

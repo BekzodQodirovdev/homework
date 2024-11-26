@@ -10,7 +10,8 @@ export async function up(knex) {
         table.string("email").unique().notNullable()
         table.string("password").notNullable()
         table.enum("role", ["admin", "user"]).notNullable().defaultTo("user")
-        table.timestamps(true,true)
+        table.boolean("is_active").defaultTo(false)
+        table.timestamps(true, true)
     })
 }
 
