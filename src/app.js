@@ -9,6 +9,7 @@ import {
     googleRouter,
     lessonRouter,
     homeworkRouter,
+    examRouter,
 } from "./router/index.js"
 
 export const app = express()
@@ -25,6 +26,7 @@ app.use("/api/v1/courses", coursesRouter)
 app.use("/api/v1/assignment", assignmentRouter)
 app.use("/api/v1/lesson", lessonRouter)
 app.use("/api/v1/homework", homeworkRouter)
+app.use("/api/v1/exam", examRouter)
 
 app.use((err, req, res) => {
     if (err) {

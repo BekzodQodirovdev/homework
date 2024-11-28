@@ -1,28 +1,28 @@
 import {
-    getAllHomeworkService,
-    getByIdHomeworkService,
-    createHomeworkService,
-    updateHomeworkService,
-    deleteHomeworkService,
+    getAllExamService,
+    getByIdExamService,
+    createExamService,
+    updateExamService,
+    deleteExamService,
 } from "../service/index.js"
-import { homeworkValidate } from "../validators/index.js"
+import { ExamValidate } from "../validators/index.js"
 
-export const createHomework = async (req, res, next) => {
+export const createExam = async (req, res, next) => {
     try {
-        const { error, value } = homeworkValidate(req.body)
+        const { error, value } = ExamValidate(req.body)
         if (error) {
             return res.status(400).send({ msg: error.details[0].message })
         }
-        const data = await createHomeworkService(req.body)
+        const data = await createExamService(req.body)
         return res.status(201).send({ status: "CREATED", data })
     } catch (err) {
         next(err)
     }
 }
 
-export const getAllHomework = async (req, res, next) => {
+export const getAllExam = async (req, res, next) => {
     try {
-        const data = await getAllHomeworkService()
+        const data = await getAllExamService()
         if (data.length == 0) {
             return res.status(404).send({ status: "NOT FOUND" })
         }
@@ -32,9 +32,9 @@ export const getAllHomework = async (req, res, next) => {
     }
 }
 
-export const getByIdHomework = async (req, res, next) => {
+export const getByIdExam = async (req, res, next) => {
     try {
-        const data = await getByIdHomeworkService(req.params.id)
+        const data = await getByIdExamService(req.params.id)
         if (!data) {
             return res.status(404).send({ status: "NOT FOUND" })
         }
@@ -44,24 +44,24 @@ export const getByIdHomework = async (req, res, next) => {
     }
 }
 
-export const updateHomework = async (req, res, next) => {
+export const updateExam = async (req, res, next) => {
     try {
-        const updatedHomework = await updateHomeworkService(
+        const updatedExam = await updateExamService(
             req.params.id,
             req.body,
         )
-        if (!updatedHomework) {
+        if (!updatedExam) {
             return res.status(404).send({ status: "NOT FOUND" })
         }
-        res.status(202).send({ status: "UPDATED", data: updatedHomework })
+        res.status(202).send({ status: "UPDATED", data: updatedExam })
     } catch (err) {
         next(err)
     }
 }
 
-export const deleteHomework = async (req, res, next) => {
+export const deleteExam = async (req, res, next) => {
     try {
-        const deleted = await deleteHomeworkService(req.params.id)
+        const deleted = await deleteExamService(req.params.id)
         if (!deleted) {
             return res.status(404).send({ status: "NOT FOUND" })
         }
