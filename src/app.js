@@ -1,4 +1,3 @@
-
 import { Hono } from "hono"
 import morgan from "morgan"
 import { indexRouter } from "./router/index.routes.js"

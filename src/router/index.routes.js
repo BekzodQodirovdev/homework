@@ -1,5 +1,5 @@
 import { Hono } from "hono"
-const indexRouter = new Hono()
+export const indexRouter = new Hono()
 import {
     authRouter,
     usersRouter,
