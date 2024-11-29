@@ -1,13 +1,16 @@
-import { app } from "./src/app.js";
+import { app } from "./src/app.js"
+import { serve } from "@hono/node-server"
 import { config } from "dotenv"
-import { logger } from "./src/utils/logger.js";
+import { logger } from "./src/utils/logger.js"
 config()
 const port = process.env.PORT || 4000
 
 const startApp = () => {
     try {
-        app.listen(port, () => {
-            logger.info(`Server running in port: ${port}`)
+        logger.info(`Server is running on http://localhost:${port}`)
+        serve({
+            fetch: app.fetch,
+            port,
         })
     } catch (err) {
         logger.info(err)

@@ -1,2 +1,5 @@
 export * from "./roleGuard/index.js"
 export * from "./token/index.js"
+export * from "./comment.middleware.js"
+export * from "./post.middleware.js"
+export * from "./user.middleware.js"

@@ -1,25 +1,11 @@
-import { Router } from "express"
-import {
-    getAllUser,
-    getByIdUser,
-    updateUser,
-    deleteUser,
-    createUser,
-    verifyController,
-} from "../controller/index.js"
-import { authGuard, isCheked, roleGuard } from "../middleware/index.js"
+import { Hono } from "hono"
+import { UsersController } from "../controller/index.js"
+import { validateUser } from "../middleware/index.js"
 
-export const userRouter = new Router()
+export const usersRouter = new Hono()
 
-userRouter.post("/verify", verifyController)
-userRouter.get("/", authGuard, roleGuard(["admin"]), getAllUser)
-userRouter.post("/", createUser)
-userRouter.get(
-    "/:id",
-    authGuard,
-    isCheked,
-    roleGuard(["admin", "user"]),
-    getByIdUser,
-)
-userRouter.put("/:id", authGuard, isCheked, updateUser)
-userRouter.delete("/:id", authGuard, isCheked, deleteUser)
+usersRouter.get("/", UsersController.getAll)
+usersRouter.get("/:id", UsersController.getOne)
+usersRouter.post("/", validateUser, UsersController.create)
+usersRouter.put("/:id", validateUser, UsersController.update)
+usersRouter.delete("/:id", UsersController.delete)
