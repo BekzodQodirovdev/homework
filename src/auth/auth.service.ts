@@ -19,15 +19,15 @@ export class AuthService {
     private readonly emailService: EmailService,
   ) {}
   async register(
-    RegisterAuthDto: RegisterAuthDto,
+    registerAuthDto: RegisterAuthDto,
   ): Promise<Omit<CreateUserDto, 'password'>> {
     const currentUser = await this.UserService.findByEmail(
-      RegisterAuthDto.email,
+      registerAuthDto.email,
     );
     if (currentUser) {
       throw new ConflictException('Bunday user mavjud');
     }
-    const user = await this.UserService.create(RegisterAuthDto);
+    const user = await this.UserService.create(registerAuthDto);
     return user;
   }
 
@@ -46,8 +46,7 @@ export class AuthService {
     if (!passwordCheked) {
       throw new NotFoundException('User not found');
     }
-    const OTP_CODE = 123;
-    this.emailService.otpSend(email, `Your otp code:  ${OTP_CODE}`);
+    this.emailService.otpSend(email, currentUser._id);
 
     const payload = {
       sub: currentUser.email,
@@ -66,5 +65,8 @@ export class AuthService {
     ]);
     return { access_token, refresh_token };
   }
-  async verify(otp_code) {}
+  async verify(id: string) {
+    const oldUser = await this.UserService.findOne(id);
+    const updateUser = await this.UserService.update(id, { is_active: true });
+  }
 }

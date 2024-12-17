@@ -32,7 +32,7 @@ export class UserService {
   findOne(id: string): Promise<CreateUserDto> {
     return this.userModel.findOne({ _id: id });
   }
-  findByEmail(email: string): Promise<User> {
+  findByEmail(email: string): Promise<any> {
     return this.userModel.findOne({ email });
   }
 

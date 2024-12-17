@@ -5,12 +5,12 @@ import { Injectable } from '@nestjs/common';
 export class EmailService {
   constructor(private maillerService: MailerService) {}
 
-  async otpSend(email: string, message: string) {
+  async otpSend(email: string, id: string) {
     try {
       await this.maillerService.sendMail({
         to: email,
         subject: 'OTP CODE',
-        text: message,
+        html: `<a href="${process.env.DOMAIN}/auth/verify/${id}">Your otp</a>`,
       });
     } catch (err) {
       console.log(err.message);
