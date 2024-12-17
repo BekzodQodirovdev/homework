@@ -19,6 +19,6 @@ export class AuthController {
 
   @Get('verify/:id')
   verify(@Param('id') id: string) {
-    
+    this.verify(id);
   }
 }
