@@ -27,6 +27,8 @@ export class AuthService {
     if (currentUser) {
       throw new ConflictException('Bunday user mavjud');
     }
+    console.log(registerAuthDto);
+    console.log(currentUser);
     const user = await this.UserService.create(registerAuthDto);
     return user;
   }

@@ -8,7 +8,7 @@ import { hashPassword } from 'src/hashed/hashpassword';
 
 @Injectable()
 export class UserService {
-  constructor(@InjectModel('users') private userModel: Model<User>) {}
+  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
   async create(
     createUserDto: CreateUserDto,
   ): Promise<Omit<CreateUserDto, 'password'>> {

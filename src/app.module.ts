@@ -3,6 +3,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -21,6 +23,8 @@ import { MailerModule } from '@nestjs-modules/mailer';
         from: process.env.SMTP_USER,
       },
     }),
+    UserModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
