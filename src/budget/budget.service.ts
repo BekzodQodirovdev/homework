@@ -13,13 +13,13 @@ interface CreateBudgetDto {
 
 @Injectable()
 export class BudgetService {
-  database: CreateBudgetDto[] = [];
   idIncrement = 1;
+  database: CreateBudgetDto[] = [];
   create(createBudgetDto: Omit<CreateBudgetDto, 'id'>): CreateBudgetDto {
     const dataAddId = { ...createBudgetDto, id: this.idIncrement };
     this.idIncrement += 1;
     this.database.push(dataAddId);
-    return this.database[this.idIncrement - 1];
+    return dataAddId;
   }
 
   findAll() {
