@@ -21,4 +21,24 @@ describe('AppController (e2e)', () => {
       .expect(200)
       .expect('Hello World!');
   });
+
+  it('/budget (GET)', () => {
+    return request(app.getHttpServer()).get('/budget').expect(200).expect([]);
+  });
+
+  it('/budget (POST)', () => {
+    const payload = {
+      name: 'Non',
+      price: 20000,
+      description: 'Yeyish uchun',
+      date: new Date(),
+      status: true,
+    };
+    return request(app.getHttpServer())
+      .post('/budget')
+      .send(payload)
+      .set('Content-Type', 'application/json')
+      .expect(201)
+      .expect({ ...payload, id: 1 });
+  });
 });

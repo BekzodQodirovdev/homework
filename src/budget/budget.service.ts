@@ -1,15 +1,6 @@
 import { Injectable } from '@nestjs/common';
-// import { CreateBudgetDto } from './dto/create-budget.dto';
+import { CreateBudgetDto } from './dto/create-budget.dto';
 import { UpdateBudgetDto } from './dto/update-budget.dto';
-
-interface CreateBudgetDto {
-  id: number;
-  name: string;
-  price: number;
-  description: string;
-  date: Date;
-  status: boolean;
-}
 
 @Injectable()
 export class BudgetService {
@@ -33,7 +24,7 @@ export class BudgetService {
 
   update(
     id: number,
-    updateBudgetDto: Omit<CreateBudgetDto, 'id'>,
+    updateBudgetDto: Omit<UpdateBudgetDto, 'id'>,
   ): CreateBudgetDto {
     const oneData = this.database.findIndex((data) => data.id == id);
     this.database[oneData] = { ...this.database[oneData], ...updateBudgetDto };

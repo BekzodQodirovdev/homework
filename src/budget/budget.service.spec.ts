@@ -34,14 +34,18 @@ describe('BudgetService', () => {
 
   it('find all', () => {
     const resualt = service.findAll();
-    const mocResualt = [
-      { ...mocData, id: 1 },
-    ];
+    const mocResualt = [{ ...mocData, id: 1 }];
     expect(resualt).toEqual(mocResualt);
   });
 
   it('find one', () => {
     const resualt = service.findOne(1);
+    const mocResualt = { ...mocData, id: 1 };
+    expect(resualt).toEqual(mocResualt);
+  });
+
+  it('update one', () => {
+    const resualt = service.update(1, mocData);
     const mocResualt = { ...mocData, id: 1 };
     expect(resualt).toEqual(mocResualt);
   });
