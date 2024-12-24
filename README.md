@@ -1,3 +1,9 @@
+<a href="https://bekzodqodirov.uz" target="blank" >bekzodqodirov.uz</a>
+
+<p align="center">
+  <a href="https://bekzodqodirov.uz" target="blank"><img src="./domain.png" width="800" alt="domain" /></a>
+</p>
+
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
 </p>
