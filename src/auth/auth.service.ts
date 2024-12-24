@@ -5,18 +5,22 @@ import { UpdateAuthDto } from './dto/update-auth.dto';
 import { UserRepository } from 'src/user/repositories/user.repository';
 import { SignInAuthDto } from './dto/signin-auth.dto';
 import { compairePassword, hashPassword } from 'src/hashed/hashpassword';
+import { EmailService } from 'src/email/email.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userReposity: UserRepository,
     private readonly jwtService: JwtService,
+    private readonly emailService: EmailService,
   ) {}
 
   async create(signUpAuthDto: SignUpAuthDto) {
     let hashPass = await hashPassword(signUpAuthDto.password);
     let updateData = { ...signUpAuthDto, password: hashPass };
-    return this.userReposity.create(updateData);
+    const newUser = await this.userReposity.create(updateData);
+    this.emailService.otpSend(newUser.email, newUser.id);
+    return newUser
   }
 
   async login(signInAuthDto: SignInAuthDto) {
@@ -65,5 +69,10 @@ export class AuthService {
 
   remove(id: number) {
     return this.userReposity.remove(id);
+  }
+
+  async verify(id: number) {
+    const oldUser = await this.userReposity.findOne(id);
+    const updateUser = await this.userReposity.update(id, { is_active: true });
   }
 }

@@ -25,6 +25,11 @@ export class AuthController {
     return this.authService.login(createAuthDto);
   }
 
+  @Get("verify/:id")
+  verify(@Param("id") id :string){
+    this.authService.verify(+id)
+  }
+
   @Get()
   findAll() {
     return this.authService.findAll();
