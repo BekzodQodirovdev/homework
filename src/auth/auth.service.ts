@@ -6,6 +6,7 @@ import { UserRepository } from 'src/user/repositories/user.repository';
 import { SignInAuthDto } from './dto/signin-auth.dto';
 import { compairePassword, hashPassword } from 'src/hashed/hashpassword';
 import { EmailService } from 'src/email/email.service';
+import { UserStatus } from 'src/common/enums/user.status';
 
 @Injectable()
 export class AuthService {
@@ -20,7 +21,7 @@ export class AuthService {
     let updateData = { ...signUpAuthDto, password: hashPass };
     const newUser = await this.userReposity.create(updateData);
     this.emailService.otpSend(newUser.email, newUser.id);
-    return newUser
+    return newUser;
   }
 
   async login(signInAuthDto: SignInAuthDto) {
@@ -73,6 +74,8 @@ export class AuthService {
 
   async verify(id: number) {
     const oldUser = await this.userReposity.findOne(id);
-    const updateUser = await this.userReposity.update(id, { is_active: true });
+    const updateUser = await this.userReposity.update(id, {
+      status: UserStatus.active,
+    });
   }
 }

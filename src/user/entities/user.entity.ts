@@ -35,6 +35,9 @@ export class User extends Model {
   @Column
   gender: string;
 
+  @Column
+  email: string;
+
   @Column({
     type: DataType.STRING,
     defaultValue: '',
