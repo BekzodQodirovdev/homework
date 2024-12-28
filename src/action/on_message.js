@@ -30,7 +30,7 @@ bot.on("message", async (ctx) => {
             const key = ctx.message.text;
             const dataId = await Data.findOneAndUpdate(
                 { user_id: ctx.from.id },
-                { key, add_status: false }
+                { key }
             );
             const data = await Data.findOne({ _id: dataId });
             await ctx.reply(`Kalit so'z : ${data.key}
