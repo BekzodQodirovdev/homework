@@ -6,19 +6,21 @@ bot.on("callback_query:data", async (ctx) => {
     try {
         const callbackData = ctx.callbackQuery.data;
         if (callbackData.startsWith("ok")) {
-            await User.findOneAndUpdate(
-                { user_id: ctx.from.id },
-                { add_status: "find" }
-            );
+            let data = {
+                user_id: ctx.from.id,
+                key: ctx.session.key,
+                value: ctx.session.value,
+            };
+            const saveData = new Data(data);
+            await saveData.save();
             ctx.reply(`Ma'lumot muvaffaqiyatli qo'shildi! 🥳 
 
  👉@chontak_bot kalit so'z👈 
 shu jumlani Telegramdagi istagan chatga yozish orqali saqlangan ma'lumotni jo'natishingiz mumkin!`);
         } else if (callbackData.startsWith("update")) {
-            await User.findOneAndUpdate(
-                { user_id: ctx.from.id },
-                { add_status: "add" }
-            );
+            ctx.session.add_status = "add";
+            ctx.session.key = "";
+            ctx.session.value = "";
             await ctx.reply(`Qaytadan boshlaymizmi? 
 
 Ok! 
@@ -32,11 +34,8 @@ Istagan ma'lumot turini menga jo'nating 🙂...`);
             }
             await ctx.reply(updateData || "Hozircha ma'lumot mavjud emas.");
         } else if (callbackData.startsWith("key")) {
-            await User.findOneAndUpdate(
-                { user_id: ctx.from.id },
-                { add_status: "find" }
-            );
-            return ctx.reply("Keyni kiriting");
+            ctx.session.add_status = "find";
+            await ctx.reply("Keyni kiriting");
         }
     } catch (err) {
         console.log(err);
@@ -48,7 +47,6 @@ bot.inlineQuery(/.*/, async (ctx) => {
     const data = await Data.find();
     let res = [];
     let idx = 1;
-    console.log(query);
     for (const obj of data) {
         let s = {
             type: "article",

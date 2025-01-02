@@ -5,11 +5,6 @@ const userSchema = mongoose.Schema({
     username: String,
     first_name: String,
     phone_number: String,
-    add_status: {
-        type: String,
-        enum: ["add", "key","find", false],
-        default: false,
-    },
 });
 
 export const User = mongoose.model("users", userSchema);

@@ -13,7 +13,6 @@ bot.command("start", async (ctx) => {
             user_id: newUserId,
             username,
             first_name,
-            add_status: false,
         });
         await newUser.save();
     }
