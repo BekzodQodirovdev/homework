@@ -18,7 +18,6 @@ bot.on("message", async (ctx) => {
             );
             const replayData = new Data({
                 user_id: ctx.from.id,
-                key: "",
                 value,
             });
             await replayData.save();

@@ -42,3 +42,24 @@ Istagan ma'lumot turini menga jo'nating 🙂...`);
         console.log(err);
     }
 });
+
+bot.inlineQuery(/.*/, async (ctx) => {
+    const query = ctx.inlineQuery.query;
+    const data = await Data.find();
+    let res = [];
+    let idx = 1;
+    console.log(query);
+    for (const obj of data) {
+        let s = {
+            type: "article",
+            id: `${idx++}`,
+            title: obj.key,
+            input_message_content: {
+                message_text: obj.value,
+            },
+            description: "@chontakorgbot",
+        };
+        res.push(s);
+    }
+    await ctx.answerInlineQuery(res);
+});
