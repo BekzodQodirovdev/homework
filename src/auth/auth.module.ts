@@ -5,10 +5,18 @@ import { MailModule } from 'src/mail/mail.module';
 import { CustomJwtService } from 'src/custom-jwt/custom-jwt.service';
 import { Auth } from './entities/auth.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Auth]), CustomJwtService, MailModule],
+  imports: [
+    TypeOrmModule.forFeature([Auth]),
+    MailModule,
+    JwtModule.register({
+      secret: process.env.JWT_ACCESS_KEY || 'default-access-key',
+      signOptions: { expiresIn: process.env.JWT_ACCESS_TIME || '1h' },
+    }),
+  ],
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [CustomJwtService, AuthService],
 })
 export class AuthModule {}
