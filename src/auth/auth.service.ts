@@ -16,13 +16,20 @@ export class AuthService {
   ) {}
 
   async create(signUpAuthDto: SignUpAuthDto) {
-    const existingUser = await this.authRepository.findOne({
-      where: { email: signUpAuthDto.email },
+    const existingUser = await this.authRepository.findOneBy({
+      email: signUpAuthDto.email,
     });
     if (existingUser) {
       throw new UnauthorizedException('Bunday email mavjud');
     }
-    return this.authRepository.create(signUpAuthDto);
+
+    const hashedPassword = await bcrypt.hash(signUpAuthDto.password, 10);
+    const newUser = this.authRepository.create({
+      ...signUpAuthDto,
+      password: hashedPassword,
+    });
+
+    return await this.authRepository.save(newUser);
   }
 
   async login(signInAuthDto: SignInAuthDto) {
@@ -32,6 +39,7 @@ export class AuthService {
     if (!user) {
       throw new UnauthorizedException('Email yoki parol xato');
     }
+
     const passwordMatch = await bcrypt.compare(
       signInAuthDto.password,
       user.password,
@@ -42,7 +50,10 @@ export class AuthService {
 
     const tokens = this.jwtService.generateTokens(user);
 
-    user.refreshtoken = await bcrypt.hash(tokens.refreshToken, 10);
+    user.refreshtoken = tokens.refreshToken;
+
+    await this.authRepository.save(user);
+
     return {
       accessToken: tokens.accessToken,
       refreshToken: tokens.refreshToken,

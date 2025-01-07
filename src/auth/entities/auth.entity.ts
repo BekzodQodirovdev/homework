@@ -1,35 +1,49 @@
-import { Table, Column, Model, DataType } from 'sequelize-typescript';
+import {
+  Table,
+  Column,
+  Model,
+  DataType,
+  PrimaryKey,
+  AutoIncrement,
+  AllowNull,
+  Unique,
+} from 'sequelize-typescript';
 import { Gender } from 'src/enum/gender';
 import { Roles } from 'src/enum/role';
 
 @Table({ tableName: 'USER' })
-export class Auth extends Model {
+export class Auth extends Model<Auth> {
+  @PrimaryKey
+  @AutoIncrement
   @Column({
     type: DataType.BIGINT,
     allowNull: false,
-    autoIncrement: true,
     unique: true,
-    primaryKey: true,
   })
   public id: number;
 
-  @Column
-  name: string;
-
   @Column({
     type: DataType.STRING,
-    unique: true,
     allowNull: false,
+  })
+  name: string;
+
+  @Unique
+  @AllowNull(false)
+  @Column({
+    type: DataType.STRING,
   })
   email: string;
 
+  @AllowNull(false)
   @Column({
     type: DataType.STRING,
-    allowNull: false,
   })
   password: string;
 
-  @Column
+  @Column({
+    type: DataType.INTEGER,
+  })
   age: number;
 
   @Column({
@@ -44,5 +58,9 @@ export class Auth extends Model {
   })
   role: Roles;
 
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
   refreshtoken?: string;
 }
