@@ -1,0 +1,60 @@
+# NestJS + MongoDB
+version: '3.8'
+
+services:
+  app:
+    image: node
+    container_name: nestjs_mongodb_app
+    working_dir: /app
+    volumes:
+      - ./:/app
+    ports:
+      - '3000:3000'
+    command: "npm run start:dev"
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo
+    container_name: nestjs_mongodb_db
+    ports:
+      - '27017:27017'
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: oldakkaun4
+      MONGO_INITDB_ROOT_PASSWORD: eq13rvb3ytgdg4gf
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:
+
+# NestJS + PostgreSQL
+# version: '3.8'
+
+# services:
+#   app:
+#     image: node:18
+#     container_name: nestjs_postgres_app
+#     working_dir: /app
+#     volumes:
+#       - ./:/app
+#     ports:
+#       - '3000:3000'
+#     command: "npm run start:dev"
+#     depends_on:
+#       - postgres
+
+#   postgres:
+#     image: postgres:14
+#     container_name: nestjs_postgres_db
+#     ports:
+#       - '5432:5432'
+#     environment:
+#       POSTGRES_USER: user
+#       POSTGRES_PASSWORD: password
+#       POSTGRES_DB: mydb
+#     volumes:
+#       - postgres_data:/var/lib/postgresql/data
+
+# volumes:
+#   postgres_data:
