@@ -23,10 +23,9 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-
-    - name: Create .env file
-      run: echo "${{ secrets.dotenv }}" > .env
-
+    
+    - run: echo "${{ secrets.dotenv }}" > .env
+    - run: cat .env
     - run: npm ci
     - run: npm run build
     - run: npm i -g pnpm
