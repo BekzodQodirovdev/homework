@@ -10,10 +10,7 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [20.x, 22.x]
+    timeout-minutes: 15
 
     steps:
     - uses: actions/checkout@v4
@@ -33,8 +30,15 @@ jobs:
     - name: Start Docker services
       run: docker compose up -d
 
+    - name: Wait for Postgres
+      run: |
+        until docker compose exec postgres pg_isready -U user; do
+          echo "Waiting for Postgres...";
+          sleep 5;
+        done
+
     - name: Run tests
       run: docker compose exec app npm test
 
     - name: Stop Docker services
-      run: docker compose down
+      run: docker compose down --volumes --remove-orphans
