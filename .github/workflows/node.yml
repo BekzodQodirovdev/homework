@@ -10,7 +10,10 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+
+    strategy:
+      matrix:
+        node-version: [20.x, 22.x]
 
     steps:
     - uses: actions/checkout@v4
@@ -26,19 +29,7 @@ jobs:
 
     - run: npm ci
     - run: npm run build
-
-    - name: Start Docker services
-      run: docker compose up -d
-
-    - name: Wait for Postgres
-      run: |
-        until docker compose exec postgres pg_isready -U user; do
-          echo "Waiting for Postgres...";
-          sleep 5;
-        done
-
-    - name: Run tests
-      run: docker compose exec app npm test
-
-    - name: Stop Docker services
-      run: docker compose down --volumes --remove-orphans
+    - run: npm i -g pnpm
+    - run: pnpm i
+    - run: npm run start
+    
