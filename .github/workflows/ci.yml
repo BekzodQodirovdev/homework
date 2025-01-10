@@ -50,4 +50,4 @@ jobs:
         run: npm run lint
 
       - name: Run project
-        run: npm run start
+        run: npm run test
