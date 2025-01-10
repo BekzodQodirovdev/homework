@@ -2,11 +2,9 @@ name: NestJS + PostgreSQL CI
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "84-dars" ]
   pull_request:
-    branches:
-      - main
+    branches: [ "84-dars" ]
 
 jobs:
   build:
