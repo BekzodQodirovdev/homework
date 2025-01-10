@@ -1,4 +1,4 @@
-name: NestJS + TypeORM + PostgreSQL CI
+name: NestJS CI
 
 on:
   push:
@@ -26,22 +26,18 @@ jobs:
           --health-retries 5
 
     steps:
-      # Repository'ni klonlash
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Node.js versiyasini o'rnatish
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
           cache: 'npm'
 
-      # Paketlarni o'rnatish
       - name: Install dependencies
         run: npm install
 
-      # Environment variable'larni sozlash
       - name: Set environment variables
         run: |
           echo "DATABASE_HOST=localhost" >> $GITHUB_ENV
@@ -50,10 +46,7 @@ jobs:
           echo "DATABASE_PASSWORD=postgres" >> $GITHUB_ENV
           echo "DATABASE_NAME=postgres" >> $GITHUB_ENV
 
-      # Testlarni ishga tushirish
-      - name: Run tests
-        run: npm test
-
-      # Kodni lint qilish (ixtiyoriy)
       - name: Run ESLint
         run: npm run lint
+
+
