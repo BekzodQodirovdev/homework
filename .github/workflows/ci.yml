@@ -1,0 +1,61 @@
+name: NestJS + PostgreSQL CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          PG_USER: postgres
+          PG_PASSWORD: postgres
+          PG_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      # Repository'ni klonlash
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Node.js versiyasini o'rnatish
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      # Paketlarni o'rnatish
+      - name: Install dependencies
+        run: npm install
+
+      # Environment variable'larni sozlash
+      - name: Set environment variables
+        run: |
+          echo "PG_HOST=localhost" >> $GITHUB_ENV
+          echo "PG_PORT=5432" >> $GITHUB_ENV
+          echo "PG_USER=postgres" >> $GITHUB_ENV
+          echo "PG_PASSWORD=postgres" >> $GITHUB_ENV
+          echo "PG_DB=postgres" >> $GITHUB_ENV
+
+      # Testlarni ishga tushirish
+      - name: Run tests
+        run: npm test
+
+      # Kodni lint qilish (ixtiyoriy)
+      - name: Run ESLint
+        run: npm run lint
