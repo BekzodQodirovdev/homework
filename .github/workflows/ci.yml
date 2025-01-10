@@ -1,4 +1,4 @@
-name: NestJS + PostgreSQL CI
+name: NestJS + TypeORM + PostgreSQL CI
 
 on:
   push:
@@ -14,9 +14,9 @@ jobs:
       postgres:
         image: postgres:15
         env:
-          PG_USER: postgres
-          PG_PASSWORD: postgres
-          PG_DB: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
         ports:
           - 5432:5432
         options: >-
@@ -44,11 +44,15 @@ jobs:
       # Environment variable'larni sozlash
       - name: Set environment variables
         run: |
-          echo "PG_HOST=localhost" >> $GITHUB_ENV
-          echo "PG_PORT=5432" >> $GITHUB_ENV
-          echo "PG_USER=postgres" >> $GITHUB_ENV
-          echo "PG_PASSWORD=postgres" >> $GITHUB_ENV
-          echo "PG_DB=postgres" >> $GITHUB_ENV
+          echo "DATABASE_HOST=localhost" >> $GITHUB_ENV
+          echo "DATABASE_PORT=5432" >> $GITHUB_ENV
+          echo "DATABASE_USERNAME=postgres" >> $GITHUB_ENV
+          echo "DATABASE_PASSWORD=postgres" >> $GITHUB_ENV
+          echo "DATABASE_NAME=postgres" >> $GITHUB_ENV
+
+      # TypeORM migratsiyalarini ishga tushirish
+      - name: Run TypeORM migrations
+        run: npm run migration:run
 
       # Testlarni ishga tushirish
       - name: Run tests
