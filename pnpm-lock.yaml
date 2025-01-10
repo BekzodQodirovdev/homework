@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@jest/globals':
+        specifier: ^29.7.0
+        version: 29.7.0
       '@nestjs-modules/mailer':
         specifier: ^2.0.2
         version: 2.0.2(@nestjs/common@10.4.15(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.15)(nodemailer@6.9.16)
@@ -50,6 +53,9 @@ importers:
       reflect-metadata:
         specifier: ^0.2.0
         version: 0.2.2
+      routes-resolver:
+        specifier: link:@nestjs/core/router/routes-resolver
+        version: link:@nestjs/core/router/routes-resolver
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
@@ -73,7 +79,7 @@ importers:
         specifier: ^5.0.0
         version: 5.0.0
       '@types/jest':
-        specifier: ^29.5.2
+        specifier: ^29.5.14
         version: 29.5.14
       '@types/node':
         specifier: ^20.3.1
@@ -109,7 +115,7 @@ importers:
         specifier: ^7.0.0
         version: 7.0.0
       ts-jest:
-        specifier: ^29.1.0
+        specifier: ^29.2.5
         version: 29.2.5(@babel/core@7.26.0)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.26.0))(jest@29.7.0(@types/node@20.17.12)(ts-node@10.9.2(@types/node@20.17.12)(typescript@5.7.2)))(typescript@5.7.2)
       ts-loader:
         specifier: ^9.4.3

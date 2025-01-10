@@ -21,6 +21,7 @@
     "prod": "npx pm2 restart ci-cd"
   },
   "dependencies": {
+    "@jest/globals": "^29.7.0",
     "@nestjs-modules/mailer": "^2.0.2",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.3.0",
@@ -35,6 +36,7 @@
     "express-basic-auth": "^1.2.1",
     "pg": "^8.13.1",
     "reflect-metadata": "^0.2.0",
+    "routes-resolver": "link:@nestjs/core/router/routes-resolver",
     "rxjs": "^7.8.1",
     "sequelize-typescript": "^2.1.6",
     "typeorm": "^0.3.20"
@@ -44,7 +46,7 @@
     "@nestjs/schematics": "^10.0.0",
     "@nestjs/testing": "^10.0.0",
     "@types/express": "^5.0.0",
-    "@types/jest": "^29.5.2",
+    "@types/jest": "^29.5.14",
     "@types/node": "^20.3.1",
     "@types/supertest": "^6.0.0",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
@@ -56,7 +58,7 @@
     "prettier": "^3.0.0",
     "source-map-support": "^0.5.21",
     "supertest": "^7.0.0",
-    "ts-jest": "^29.1.0",
+    "ts-jest": "^29.2.5",
     "ts-loader": "^9.4.3",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.2.0",

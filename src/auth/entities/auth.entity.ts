@@ -8,8 +8,8 @@ import {
   AllowNull,
   Unique,
 } from 'sequelize-typescript';
-import { Gender } from 'src/enum/gender';
-import { Roles } from 'src/enum/role';
+import { Gender } from '../../enum/gender';
+import { Roles } from '../../enum/role';
 
 @Table({ tableName: 'USER' })
 export class Auth extends Model<Auth> {

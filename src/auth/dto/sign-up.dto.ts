@@ -1,4 +1,4 @@
-import { Gender } from 'src/enum/gender';
+import { Gender } from '../../enum/gender';
 import { IsString, Min, Max, IsNumber } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
