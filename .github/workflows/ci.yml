@@ -50,10 +50,6 @@ jobs:
           echo "DATABASE_PASSWORD=postgres" >> $GITHUB_ENV
           echo "DATABASE_NAME=postgres" >> $GITHUB_ENV
 
-      # TypeORM migratsiyalarini ishga tushirish
-      - name: Run TypeORM migrations
-        run: npm run migration:run
-
       # Testlarni ishga tushirish
       - name: Run tests
         run: npm test
