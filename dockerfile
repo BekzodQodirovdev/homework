@@ -8,7 +8,7 @@ COPY pnpm-lock.yaml ./
 RUN npm install -g pnpm
 RUN pnpm install 
 
-COPY ./src ./src
+COPY . .
 
 EXPOSE 3000
 

@@ -10,9 +10,9 @@ services:
     ports:
       - '3000:3000'
     depends_on:
-      - postgres_db
+      - postgres
 
-  postgres_db:
+  postgres:
     image: postgres:16-alpine
     container_name: nestjs_postgres
     environment:
@@ -20,4 +20,4 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
     ports:
-      - '5434:5432'
+      - '5435:5432'
