@@ -42,10 +42,7 @@ jobs:
       - name: Deploy to server
         run: |
           ssh -v -o StrictHostKeyChecking=no ${{ secrets.USER }}@${{ secrets.HOST }} <<'ENDSSH'
-      - name: Log in to Docker Hub
-        run: |
-          echo ${{ secrets.DOCKER_TOKEN }} | docker login --username ${{ secrets.DOCKER_USERNAME }} --password-stdin
-
+          docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_TOKEN}}
           docker pull ${{secrets.DOCKER_USERNAME}}/${{secrets.DOCKER_REPO}}:${{secrets.DOCKER_TAG}}
           docker stop ${{secrets.CONTAINER}}
           docker rm ${{secrets.CONTAINER}}
