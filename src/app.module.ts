@@ -14,7 +14,7 @@ import { env } from 'process';
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: env.PG_HOST || 'localhost',
+      host: env.PG_HOST || 'postgres-db',
       port: +env.PG_PORT || 5432,
       username: env.PG_USER || 'postgres',
       password: env.PG_PASSWORD || 'postgres',

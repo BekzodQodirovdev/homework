@@ -1,0 +1,36 @@
+services:
+
+  postgres-db:
+    container_name: ci-cd-postgres
+    image: postgres:alpine
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    env_file:
+      - .env
+    volumes:
+      - cv-volume:/var/lib/postgresql/data
+    ports:
+      - "5436:5432"
+    restart: unless-stopped
+
+  backend-app:
+    container_name: ci-cd
+    build: 
+      context: .
+    ports:
+      - "4040"
+    depends_on:
+      - postgres-db
+    env_file:
+      - .env
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    restart: unless-stopped
+    command: npm run start:dev
+
+
+volumes:
+  cv-volume:
