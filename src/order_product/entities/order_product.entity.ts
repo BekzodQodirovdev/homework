@@ -1,6 +1,6 @@
 import { Order } from 'src/order/entities/order.entity';
 import { Product } from 'src/product/entities/product.entity';
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 
 @Entity()
 export class OrderProduct {
@@ -15,5 +15,5 @@ export class OrderProduct {
   @ManyToOne(() => Product, (product) => product.order_products, {
     onDelete: 'CASCADE',
   })
-  product: string;
+  product: Product;
 }

@@ -35,11 +35,7 @@ export class ProductService {
     if (!product) {
       throw new NotFoundException('Product not found');
     }
-    product = {
-      ...product,
-      ...updateProductDto,
-    };
-    return this.productRepository.save(product);
+    return this.productRepository.update(id, updateProductDto);
   }
 
   async remove(id: string) {

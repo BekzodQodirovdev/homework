@@ -61,18 +61,9 @@ export class UserService {
     if (!updateData) {
       throw new NotFoundException('User not found');
     }
-    updateData = {
-      ...updateData,
-      ...updateUserDto,
-    };
-    const updatedUser = await this.userRepository.save(updateData);
+    await this.userRepository.update(id, updateUserDto);
 
-    return {
-      id: updateData.id,
-      fullname: updatedUser.fullname,
-      email: updatedUser.email,
-      phone: updatedUser.phone,
-    };
+    return { massage: 'Updated' };
   }
 
   async remove(id: string) {

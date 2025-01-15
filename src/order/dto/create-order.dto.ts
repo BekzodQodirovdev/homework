@@ -5,7 +5,9 @@ import { OrderEnum } from 'src/enum/order.enum';
 export class CreateOrderDto {
   @IsNotEmpty()
   @IsUUID()
-  user_id: string;
+  user: {
+    id: string;
+  };
 
   @IsNotEmpty()
   @Type(() => Number)

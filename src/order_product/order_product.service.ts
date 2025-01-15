@@ -11,13 +11,16 @@ export class OrderProductService {
     readonly orderProductRepository: Repository<OrderProduct>,
   ) {}
   create(createOrderProductDto: CreateOrderProductDto) {
-    return this.orderProductRepository.save(
-      createOrderProductDto as DeepPartial<OrderProduct>,
-    );
+    return this.orderProductRepository.save(createOrderProductDto);
   }
 
   async findAll() {
-    const or_prt_data = await this.orderProductRepository.find();
+    const or_prt_data = await this.orderProductRepository.find({
+      relations: {
+        order: true,
+        product: true,
+      },
+    });
     if (!or_prt_data) {
       throw new NotFoundException('Order Product not found');
     }
@@ -37,11 +40,7 @@ export class OrderProductService {
     if (!or_prt_data) {
       throw new NotFoundException('Order Product not found');
     }
-    or_prt_data = {
-      ...or_prt_data,
-      ...updateOrderProductDto,
-    };
-    return this.orderProductRepository.save(or_prt_data);
+    return this.orderProductRepository.update(id, updateOrderProductDto);
   }
 
   async remove(id: string) {

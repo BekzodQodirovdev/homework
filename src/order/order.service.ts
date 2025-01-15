@@ -16,7 +16,10 @@ export class OrderService {
 
   async findAll() {
     const orders = await this.orderRepository.find({
-      relations: ['user', 'order_products', 'order_products.product'],
+      relations: {
+        user: true,
+        order_products: true,
+      },
     });
 
     if (!orders.length) {
@@ -28,7 +31,10 @@ export class OrderService {
   async findOne(id: string) {
     const order = await this.orderRepository.findOne({
       where: { id: id },
-      relations: ['user', 'order_products', 'order_products.product'],
+      relations: {
+        user: true,
+        order_products: true,
+      },
     });
     if (!order) {
       throw new NotFoundException('orders not found');
@@ -41,11 +47,7 @@ export class OrderService {
     if (!order) {
       throw new NotFoundException('orders not found');
     }
-    order = {
-      ...order,
-      ...updateOrderDto,
-    };
-    return this.orderRepository.save(order);
+    return this.orderRepository.update(id, updateOrderDto);
   }
 
   async remove(id: string) {
