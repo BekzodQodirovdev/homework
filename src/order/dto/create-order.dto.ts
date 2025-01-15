@@ -4,7 +4,6 @@ import { OrderEnum } from 'src/enum/order.enum';
 
 export class CreateOrderDto {
   @IsNotEmpty()
-  @IsUUID()
   user: {
     id: string;
   };
