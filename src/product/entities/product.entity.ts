@@ -21,6 +21,9 @@ export class Product {
   @Column('int')
   quantity: number;
 
-  @OneToMany(() => OrderProduct, (orderProduct) => orderProduct.product) // One product -> Many order_products
+  @OneToMany(() => OrderProduct, (orderProduct) => orderProduct.product, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   order_products: OrderProduct[];
 }

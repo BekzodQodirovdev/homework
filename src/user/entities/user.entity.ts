@@ -28,6 +28,9 @@ export class User {
   @Column({ type: 'enum', enum: UserRole, default: UserRole.USER })
   role: UserRole;
 
-  @OneToMany(() => Order, (order) => order.user)
+  @OneToMany(() => Order, (order) => order.user, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   orders: Order[];
 }

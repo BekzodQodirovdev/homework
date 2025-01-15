@@ -23,6 +23,9 @@ export class Order {
   @Column({ type: 'enum', enum: OrderEnum, default: OrderEnum.PROCESSING })
   status: OrderEnum;
 
-  @OneToMany(() => OrderProduct, (orderProduct) => orderProduct.order)
+  @OneToMany(() => OrderProduct, (orderProduct) => orderProduct.order, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   order_products: OrderProduct[];
 }
