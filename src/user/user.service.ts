@@ -44,17 +44,40 @@ export class UserService {
     );
   }
 
-  async findAll(page: number = 1, limit: number = 10) {
+  async findAll(q: string = '', page: number = 1, limit: number = 10) {
     const skip = (page - 1) * limit;
-    const redisData = await this.redis.keys('order:*');
+    const take = skip + limit - 1;
+    // const redisData = await this.redis.keys('user:*');
+    const redisData = await this.redis.lrange('user:*', skip, take);
+
     if (redisData.length > 0) {
       const user = await this.redis.mget(redisData);
       return user.map((user) => JSON.parse(user));
-    } else {
+    } else if (q !== '') {
+      const users = await this.userRepository.find({
+        where: { fullname: q },
+        select: ['id', 'fullname', 'email', 'phone'],
+        skip: skip,
+        take: take,
+      });
+
+      if (!users.length) {
+        throw new NotFoundException('User not found');
+      }
+      users.forEach(async (user) => {
+        await this.redis.set(
+          `user:${user.id}`,
+          JSON.stringify(user),
+          'EX',
+          3600,
+        );
+      });
+      return users;
+    } else if (q === '') {
       const users = await this.userRepository.find({
         select: ['id', 'fullname', 'email', 'phone'],
         skip: skip,
-        take: page,
+        take: take,
       });
 
       if (!users.length) {

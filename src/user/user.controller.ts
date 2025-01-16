@@ -23,8 +23,12 @@ export class UserController {
   }
 
   @Get()
-  findAll(@Query('page') page: string, @Query('limit') limit: string) {
-    return this.userService.findAll(+page, +limit);
+  findAll(
+    @Query('q') q: string,
+    @Query('page') page: string,
+    @Query('limit') limit: string,
+  ) {
+    return this.userService.findAll(q, +page, +limit);
   }
 
   @Get(':id')
