@@ -9,12 +9,15 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
+import { InjectRedis } from '@nestjs-modules/ioredis';
+import Redis from 'ioredis';
 
 @Injectable()
 export class UserService {
   constructor(
     @Inject('USER_REPOSITORY')
     private readonly userRepository: Repository<User>,
+    @InjectRedis() private readonly redis: Redis,
   ) {}
   async create(createUserDto: CreateUserDto) {
     const user = await this.userRepository.findOne({
@@ -26,26 +29,54 @@ export class UserService {
     }
 
     const newUser = await this.userRepository.save(createUserDto);
-    return {
+
+    const userData = {
       id: newUser.id,
       fullname: newUser.fullname,
       email: newUser.email,
       phone: newUser.phone,
     };
+    await this.redis.set(
+      `user:${userData.id}`,
+      JSON.stringify(userData),
+      'EX',
+      3600,
+    );
   }
 
-  async findAll() {
-    const users = await this.userRepository.find({
-      select: ['id', 'fullname', 'email', 'phone'],
-    });
+  async findAll(page: number = 1, limit: number = 10) {
+    const skip = (page - 1) * limit;
+    const redisData = await this.redis.keys('order:*');
+    if (redisData.length > 0) {
+      const user = await this.redis.mget(redisData);
+      return user.map((user) => JSON.parse(user));
+    } else {
+      const users = await this.userRepository.find({
+        select: ['id', 'fullname', 'email', 'phone'],
+        skip: skip,
+        take: page,
+      });
 
-    if (!users.length) {
-      throw new NotFoundException('User not found');
+      if (!users.length) {
+        throw new NotFoundException('User not found');
+      }
+      users.forEach(async (user) => {
+        await this.redis.set(
+          `user:${user.id}`,
+          JSON.stringify(user),
+          'EX',
+          3600,
+        );
+      });
+      return users;
     }
-    return users;
   }
 
   async findOne(id: string) {
+    const cacheUser = await this.redis.get(`user:${id}`);
+    if (cacheUser) {
+      return JSON.parse(cacheUser);
+    }
     const user = await this.userRepository.findOne({
       where: { id: id },
       select: ['id', 'fullname', 'email', 'phone'],
@@ -53,6 +84,7 @@ export class UserService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
+    await this.redis.set(`user:${id}`, JSON.stringify(user), 'EX', 3600);
     return user;
   }
 
@@ -61,7 +93,21 @@ export class UserService {
     if (!updateData) {
       throw new NotFoundException('User not found');
     }
-    await this.userRepository.update(id, updateUserDto);
+    const resualt = await this.userRepository.update(id, updateUserDto);
+    if (resualt.affected === 0) {
+      throw new NotFoundException('User not found or update failed');
+    }
+
+    const updateUser = await this.userRepository.findOneBy({ id });
+
+    if (updateUser) {
+      await this.redis.set(
+        `user:${id}`,
+        JSON.stringify(updateUser),
+        'EX',
+        3600,
+      );
+    }
 
     return { massage: 'Updated' };
   }
@@ -75,6 +121,7 @@ export class UserService {
     }
 
     await this.userRepository.remove(user);
+    await this.redis.del(`user:${id}`);
 
     return {
       id: user.id,
