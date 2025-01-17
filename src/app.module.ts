@@ -11,7 +11,7 @@ import { RedisModule } from '@nestjs-modules/ioredis';
   imports: [
     RedisModule.forRoot({
       type: 'single',
-      url: 'redis://localhost:6379',
+      url: 'redis://localhost:6375',
     }),
     DatabaseModule,
     UserModule,

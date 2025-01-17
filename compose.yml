@@ -1,20 +1,21 @@
 services:
   postgres:
-    image: postgres
+    image: postgres:alpine
     environment:
       - POSTGRES_PASSWORD=bekzod123
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
     ports:
-      - '5433:5432'
+      - '5437:5432'
     networks:
       - postgres
+    restart: unless-stopped
 
   redis:
     image: redis
     ports:
-      - '6379:6379'
-    
+      - '6375:6379'
+
 networks:
-  postgres: 
+  postgres:
     driver: bridge
