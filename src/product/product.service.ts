@@ -1,20 +1,19 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { CreateProductDto } from './dto/create-product.dto';
-import { UpdateProductDto } from './dto/update-product.dto';
-import { Product } from './entities/product.entity';
-import { Repository } from 'typeorm';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRedis } from '@nestjs-modules/ioredis';
 import Redis from 'ioredis';
+import { PrismaService } from '../prisma/prisma.service';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class ProductService {
   constructor(
-    @Inject('PRODUCT_REPOSITORY')
-    private readonly productRepository: Repository<Product>,
+    private readonly productRepository: PrismaService,
     @InjectRedis() private readonly redis: Redis,
   ) {}
-  async create(createProductDto: CreateProductDto) {
-    const resualt = await this.productRepository.save(createProductDto);
+  async create(createProductDto: Prisma.ProductCreateInput) {
+    const resualt = await this.productRepository.product.create({
+      data: createProductDto,
+    });
     await this.redis.set(
       `product:${resualt.id}`,
       JSON.stringify(resualt),
@@ -31,7 +30,7 @@ export class ProductService {
       // console.log('cache hit');
       return products.map((product) => JSON.parse(product));
     } else {
-      const products = await this.productRepository.find();
+      const products = await this.productRepository.product.findMany();
       if (!products.length) {
         throw new NotFoundException('Product not found');
       }
@@ -55,7 +54,9 @@ export class ProductService {
       return JSON.parse(cachedProduct);
     }
 
-    const product = await this.productRepository.findOneBy({ id });
+    const product = await this.productRepository.product.findFirst({
+      where: { id },
+    });
     if (!product) {
       throw new NotFoundException('Product not found');
     }
@@ -64,16 +65,20 @@ export class ProductService {
     return product;
   }
 
-  async update(id: string, updateProductDto: UpdateProductDto) {
-    let product = await this.productRepository.findOneBy({ id: id });
+  async update(id: string, updateProductDto: Prisma.ProductUpdateInput) {
+    let product = await this.productRepository.product.findFirst({
+      where: { id },
+    });
     if (!product) {
       throw new NotFoundException('Product not found');
     }
-    const result = await this.productRepository.update(id, updateProductDto);
-    if (result.affected === 0) {
-      throw new NotFoundException('Product not found or update failed');
-    }
-    const updatedProduct = await this.productRepository.findOneBy({ id });
+    const result = await this.productRepository.product.update({
+      where: { id },
+      data: updateProductDto,
+    });
+    const updatedProduct = await this.productRepository.product.findFirst({
+      where: { id },
+    });
     if (updatedProduct) {
       await this.redis.set(
         `product:${id}`,
@@ -86,11 +91,13 @@ export class ProductService {
   }
 
   async remove(id: string) {
-    const product = await this.productRepository.findOneBy({ id: id });
+    const product = await this.productRepository.product.findFirst({
+      where: { id },
+    });
     if (!product) {
       throw new NotFoundException('Product not found');
     }
-    await this.productRepository.remove(product);
+    await this.productRepository.product.delete({ where: { id } });
     await this.redis.del(`product:${id}`);
 
     return { massage: 'Deleted' };

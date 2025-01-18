@@ -5,22 +5,19 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { Repository } from 'typeorm';
-import { User } from './entities/user.entity';
 import { InjectRedis } from '@nestjs-modules/ioredis';
 import Redis from 'ioredis';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class UserService {
   constructor(
-    @Inject('USER_REPOSITORY')
-    private readonly userRepository: Repository<User>,
+    private readonly userRepository: PrismaService,
     @InjectRedis() private readonly redis: Redis,
   ) {}
-  async create(createUserDto: CreateUserDto) {
-    const user = await this.userRepository.findOne({
+  async create(createUserDto: Prisma.UserCreateInput) {
+    const user = await this.userRepository.user.findMany({
       where: { email: createUserDto.email },
     });
 
@@ -28,7 +25,9 @@ export class UserService {
       throw new HttpException('Email already exists', HttpStatus.BAD_REQUEST);
     }
 
-    const newUser = await this.userRepository.save(createUserDto);
+    const newUser = await this.userRepository.user.create({
+      data: createUserDto,
+    });
 
     const userData = {
       id: newUser.id,
@@ -54,9 +53,14 @@ export class UserService {
       const user = await this.redis.mget(redisData);
       return user.map((user) => JSON.parse(user));
     } else if (q !== '') {
-      const users = await this.userRepository.find({
+      const users = await this.userRepository.user.findMany({
         where: { fullname: q },
-        select: ['id', 'fullname', 'email', 'phone'],
+        select: {
+          id: true,
+          fullname: true,
+          email: true,
+          phone: true,
+        },
         skip: skip,
         take: take,
       });
@@ -74,8 +78,13 @@ export class UserService {
       });
       return users;
     } else if (q === '') {
-      const users = await this.userRepository.find({
-        select: ['id', 'fullname', 'email', 'phone'],
+      const users = await this.userRepository.user.findMany({
+        select: {
+          id: true,
+          fullname: true,
+          email: true,
+          phone: true,
+        },
         skip: skip,
         take: take,
       });
@@ -100,9 +109,14 @@ export class UserService {
     if (cacheUser) {
       return JSON.parse(cacheUser);
     }
-    const user = await this.userRepository.findOne({
+    const user = await this.userRepository.user.findFirst({
       where: { id: id },
-      select: ['id', 'fullname', 'email', 'phone'],
+      select: {
+        id: true,
+        fullname: true,
+        email: true,
+        phone: true,
+      },
     });
     if (!user) {
       throw new NotFoundException('User not found');
@@ -111,39 +125,30 @@ export class UserService {
     return user;
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto) {
-    let updateData = await this.userRepository.findOneBy({ id: id });
+  async update(id: string, updateUserDto: Prisma.UserUpdateInput) {
+    let updateData = await this.userRepository.user.findFirst({
+      where: { id },
+    });
     if (!updateData) {
       throw new NotFoundException('User not found');
     }
-    const resualt = await this.userRepository.update(id, updateUserDto);
-    if (resualt.affected === 0) {
-      throw new NotFoundException('User not found or update failed');
-    }
+    const resualt = await this.userRepository.user.update({
+      where: { id },
+      data: updateUserDto,
+    });
 
-    const updateUser = await this.userRepository.findOneBy({ id });
-
-    if (updateUser) {
-      await this.redis.set(
-        `user:${id}`,
-        JSON.stringify(updateUser),
-        'EX',
-        3600,
-      );
+    if (resualt) {
+      await this.redis.set(`user:${id}`, JSON.stringify(resualt), 'EX', 3600);
     }
 
     return { massage: 'Updated' };
   }
 
   async remove(id: string) {
-    const user = await this.userRepository.findOne({
+    const user = await this.userRepository.user.delete({
       where: { id: id },
     });
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
 
-    await this.userRepository.remove(user);
     await this.redis.del(`user:${id}`);
 
     return {

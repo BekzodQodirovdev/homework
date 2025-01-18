@@ -1,20 +1,19 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { CreateOrderDto } from './dto/create-order.dto';
-import { UpdateOrderDto } from './dto/update-order.dto';
-import { Repository } from 'typeorm';
-import { Order } from './entities/order.entity';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRedis } from '@nestjs-modules/ioredis';
 import Redis from 'ioredis';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class OrderService {
   constructor(
-    @Inject('ORDER_REPOSITORY')
-    private readonly orderRepository: Repository<Order>,
+    private readonly orderRepository: PrismaService,
     @InjectRedis() private readonly redis: Redis,
   ) {}
-  async create(createOrderDto: CreateOrderDto) {
-    const resualt = await this.orderRepository.save(createOrderDto);
+  async create(createOrderDto: Prisma.OrderCreateInput) {
+    const resualt = await this.orderRepository.order.create({
+      data: createOrderDto,
+    });
     await this.redis.set(
       `order:${resualt.id}`,
       JSON.stringify(resualt),
@@ -30,16 +29,18 @@ export class OrderService {
       const orders = await this.redis.mget(redisData);
       return orders.map((order) => JSON.parse(order));
     } else {
-      const orders = await this.orderRepository.find({
-        relations: {
-          user: true,
-        },
+      const orders = await this.orderRepository.order.findMany({
         select: {
+          id: true,
+          total_price: true,
+          status: true,
+          OrderProduct: true,
           user: {
-            id: true,
-            fullname: true,
-            email: true,
-            phone: true,
+            select: {
+              id: true,
+              fullname: true,
+              email: true,
+            },
           },
         },
       });
@@ -63,11 +64,20 @@ export class OrderService {
     if (cacheOrder) {
       return JSON.parse(cacheOrder);
     }
-    const order = await this.orderRepository.findOne({
+    const order = await this.orderRepository.order.findFirst({
       where: { id: id },
-      relations: {
-        user: true,
-        order_products: true,
+      select: {
+        id: true,
+        total_price: true,
+        status: true,
+        OrderProduct: true,
+        user: {
+          select: {
+            id: true,
+            fullname: true,
+            email: true,
+          },
+        },
       },
     });
     if (!order) {
@@ -77,33 +87,29 @@ export class OrderService {
     return order;
   }
 
-  async update(id: string, updateOrderDto: UpdateOrderDto) {
-    let order = await this.orderRepository.findOneBy({ id: id });
+  async update(id: string, updateOrderDto: Prisma.OrderUpdateInput) {
+    let order = await this.orderRepository.order.findFirst({ where: { id } });
     if (!order) {
       throw new NotFoundException('orders not found');
     }
-    const resualt = await this.orderRepository.update(id, updateOrderDto);
-    if (resualt.affected === 0) {
-      throw new NotFoundException('Order not found or update failed');
+    const resualt = await this.orderRepository.order.update({
+      where: { id },
+      data: updateOrderDto,
+    });
+    if (resualt) {
+      await this.redis.set(`order:${id}`, JSON.stringify(resualt), 'EX', 3600);
     }
-    const updateOrder = await this.orderRepository.findOneBy({ id });
-    if (updateOrder) {
-      await this.redis.set(
-        `order:${id}`,
-        JSON.stringify(updateOrder),
-        'EX',
-        3600,
-      );
-    }
-    return updateOrder;
+    return resualt;
   }
 
   async remove(id: string) {
-    const order = await this.orderRepository.findOneBy({ id: id });
+    const order = await this.orderRepository.order.findFirst({
+      where: { id },
+    });
     if (!order) {
       throw new NotFoundException('orders not found');
     }
-    await this.orderRepository.remove(order);
+    await this.orderRepository.order.delete({ where: { id } });
     await this.redis.del(`order:${id}`);
     return { massage: 'Deleted' };
   }

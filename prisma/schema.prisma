@@ -1,0 +1,74 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  USER
+  MANAGER
+}
+
+model User {
+  id            String   @id @default(cuid())
+  fullname      String
+  email         String   @unique
+  password      String
+  phone         String
+  role          UserRole @default(USER)
+  is_active     Boolean  @default(true)
+  refresh_token String?
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+  Order         Order[]
+}
+
+model Product {
+  id           String         @id @default(cuid())
+  name         String
+  description  String?
+  price        Float
+  quantity     Int
+  created_at   DateTime       @default(now())
+  updated_at   DateTime       @updatedAt
+  OrderProduct OrderProduct[]
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  CANCELLED
+}
+
+model Order {
+  id           String         @id @default(cuid())
+  user_id      String
+  user         User           @relation(fields: [user_id], references: [id])
+  total_price  Float
+  status       OrderStatus
+  created_at   DateTime       @default(now())
+  updated_at   DateTime       @updatedAt
+  OrderProduct OrderProduct[]
+}
+
+model OrderProduct {
+  id         String   @id @default(cuid())
+  order_id   String
+  order      Order    @relation(fields: [order_id], references: [id])
+  product_id String
+  product    Product  @relation(fields: [product_id], references: [id])
+  quantity   Int
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}

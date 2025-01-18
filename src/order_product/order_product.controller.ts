@@ -9,15 +9,14 @@ import {
   ParseUUIDPipe,
 } from '@nestjs/common';
 import { OrderProductService } from './order_product.service';
-import { CreateOrderProductDto } from './dto/create-order_product.dto';
-import { UpdateOrderProductDto } from './dto/update-order_product.dto';
+import { Prisma } from '@prisma/client';
 
 @Controller('order-product')
 export class OrderProductController {
   constructor(private readonly orderProductService: OrderProductService) {}
 
   @Post()
-  create(@Body() createOrderProductDto: CreateOrderProductDto) {
+  create(@Body() createOrderProductDto: Prisma.OrderProductCreateInput) {
     return this.orderProductService.create(createOrderProductDto);
   }
 
@@ -34,7 +33,7 @@ export class OrderProductController {
   @Patch(':id')
   update(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() updateOrderProductDto: UpdateOrderProductDto,
+    @Body() updateOrderProductDto: Prisma.OrderProductUpdateInput,
   ) {
     return this.orderProductService.update(id, updateOrderProductDto);
   }

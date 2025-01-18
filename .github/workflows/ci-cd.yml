@@ -2,9 +2,9 @@ name: Node.js CI CD
 
 on:
   push:
-    branches: ['88-dars']
+    branches: ['89-dars']
   pull_request:
-    branches: ['88-dars']
+    branches: ['89-dars']
 
 jobs:
   build:
